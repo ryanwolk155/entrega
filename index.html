@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Botão Purchase FB</title>
+
+<!-- Meta Pixel -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];
+t=b.createElement(e);t.async=!0;
+t.src=v;
+s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}
+(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
+
+fbq('init', 'SEU_PIXEL_ID'); 
+fbq('track', 'PageView');
+</script>
+
+<noscript>
+<img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=SEU_PIXEL_ID&ev=PageView&noscript=1"/>
+</noscript>
+<!-- End Meta Pixel -->
+
+<style>
+body{
+    margin:0;
+    padding:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    background:#111;
+    font-family:Arial,sans-serif;
+}
+button{
+    padding:20px 40px;
+    font-size:22px;
+    border:none;
+    border-radius:12px;
+    background:#00c853;
+    color:#fff;
+    cursor:pointer;
+    font-weight:bold;
+}
+button:hover{
+    background:#00b248;
+}
+</style>
+</head>
+<body>
+
+<button onclick="comprar()">ACESSE AGORA</button>
+
+<script>
+function comprar(){
+
+    // Evento Purchase correto
+    fbq('track', 'Purchase', {
+        value: 13.00,
+        currency: 'BRL'
+    });
+
+    // Espera 800ms para registrar no Facebook
+    setTimeout(function(){
+        window.location.href = "https://seulink.com";
+    }, 800);
+}
+</script>
+
+</body>
+</html>
