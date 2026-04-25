@@ -19,7 +19,7 @@ s=b.getElementsByTagName(e)[0];
 s.parentNode.insertBefore(t,s)}
 (window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
 
-fbq('init', '1512033480319222'); 
+fbq('init', '1512033480319222');
 fbq('track', 'PageView');
 </script>
 
@@ -49,26 +49,43 @@ button{
     color:#fff;
     cursor:pointer;
     font-weight:bold;
+    transition:0.2s;
 }
 button:hover{
     background:#00b248;
+}
+button:disabled{
+    background:#555;
+    cursor:not-allowed;
 }
 </style>
 </head>
 <body>
 
-<button onclick="comprar()">ACESSE AGORA</button>
+<button id="btnComprar">ACESSE AGORA</button>
 
 <script>
+let clicado = false;
+
+document.getElementById("btnComprar").addEventListener("click", comprar);
+
 function comprar(){
 
-    // Evento Purchase correto
-    fbq('track', 'Purchase', {
+    // trava clique duplo / triplo
+    if(clicado) return;
+    clicado = true;
+
+    const botao = document.getElementById("btnComprar");
+    botao.disabled = true;
+    botao.innerText = "REDIRECIONANDO...";
+
+    // Evento Purchase apenas 1x
+    fbq('trackSingle', '1512033480319222', 'Purchase', {
         value: 13.00,
         currency: 'BRL'
     });
 
-    // Espera 800ms para registrar no Facebook
+    // redireciona
     setTimeout(function(){
         window.location.href = "https://t.me/+emqgwpPWdtA3NTJh";
     }, 800);
