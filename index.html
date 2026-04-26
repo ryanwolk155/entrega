@@ -65,21 +65,55 @@ button:disabled{
 <button id="btnComprar">ACESSE AGORA</button>
 
 <script>
+const botao = document.getElementById("btnComprar");
+
+const chaveBloqueio = "ultimoCliqueLead";
+const tempoBloqueio = 48 * 60 * 60 * 1000; // 48 horas
 let clicado = false;
 
-document.getElementById("btnComprar").addEventListener("click", comprar);
+// Verifica bloqueio
+function verificarBloqueio(){
+
+    const ultimoClique = localStorage.getItem(chaveBloqueio);
+
+    if(ultimoClique){
+
+        const agora = Date.now();
+        const diferenca = agora - Number(ultimoClique);
+
+        if(diferenca < tempoBloqueio){
+            botao.disabled = true;
+            botao.innerText = "Você já clicou!";
+            clicado = true;
+            return;
+        }else{
+            localStorage.removeItem(chaveBloqueio);
+        }
+    }
+
+    botao.disabled = false;
+    botao.innerText = "ACESSE AGORA";
+    clicado = false;
+}
+
+verificarBloqueio();
+
+botao.addEventListener("click", comprar);
 
 function comprar(){
 
-    // trava clique duplo / triplo
+    // trava clique duplo/triplo
     if(clicado) return;
+
     clicado = true;
 
-    const botao = document.getElementById("btnComprar");
     botao.disabled = true;
     botao.innerText = "REDIRECIONANDO...";
 
-    // Evento Purchase apenas 1x
+    // salva clique por 48h
+    localStorage.setItem(chaveBloqueio, Date.now());
+
+    // Evento Purchase somente 1x
     fbq('trackSingle', '1512033480319222', 'Purchase', {
         value: 13.00,
         currency: 'BRL'
