@@ -3,127 +3,93 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Botão Purchase FB</title>
+<title>Obrigado pela compra!</title>
 
 <!-- Meta Pixel -->
 <script>
 !function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
 n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;
-n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];
-t=b.createElement(e);t.async=!0;
-t.src=v;
-s=b.getElementsByTagName(e)[0];
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
 s.parentNode.insertBefore(t,s)}
-(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
+(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
 
 fbq('init', '2037756700442031');
 fbq('track', 'PageView');
 </script>
-
 <noscript>
-<img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=2037756700442031&ev=PageView&noscript=1"/>
+  <img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=2037756700442031&ev=PageView&noscript=1"/>
 </noscript>
 <!-- End Meta Pixel -->
 
+<script>
+// 🔑 Gera event_id único por sessão (útil para CAPI no futuro)
+function gerarEventId() {
+  return 'purchase_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+}
+
+// ✅ Dispara Purchase na chegada, com deduplicação por sessionStorage
+const chaveDedup = 'purchase_fired';
+
+if (!sessionStorage.getItem(chaveDedup)) {
+  sessionStorage.setItem(chaveDedup, '1');
+
+  const eventId = gerarEventId();
+
+  fbq('trackSingle', '2037756700442031', 'Purchase', {
+    value: 9.70,
+    currency: 'BRL',
+    event_id: eventId  // para deduplicar com CAPI no futuro
+  });
+}
+</script>
+
 <style>
-body{
-    margin:0;
-    padding:0;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-    background:#111;
-    font-family:Arial,sans-serif;
+body {
+  margin: 0; padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #111;
+  font-family: Arial, sans-serif;
 }
-button{
-    padding:20px 40px;
-    font-size:22px;
-    border:none;
-    border-radius:12px;
-    background:#00c853;
-    color:#fff;
-    cursor:pointer;
-    font-weight:bold;
-    transition:0.2s;
+button {
+  padding: 20px 40px;
+  font-size: 22px;
+  border: none;
+  border-radius: 12px;
+  background: #00c853;
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
 }
-button:hover{
-    background:#00b248;
-}
-button:disabled{
-    background:#555;
-    cursor:not-allowed;
-}
+button:hover { background: #00b248; }
+button:disabled { background: #555; cursor: not-allowed; }
 </style>
 </head>
 <body>
 
-<button id="btnComprar">VER OS CONTEÚDOS</button>
+<button id="btnConteudo">VER OS CONTEÚDOS</button>
 
 <script>
-const botao = document.getElementById("btnComprar");
-
-const chaveBloqueio = "ultimoCliqueLead";
-const tempoBloqueio = 48 * 60 * 60 * 1000; // 48 horas
+const botao = document.getElementById("btnConteudo");
 let clicado = false;
 
-// Verifica bloqueio
-function verificarBloqueio(){
+botao.addEventListener("click", function () {
+  if (clicado) return;
+  clicado = true;
+  botao.disabled = true;
+  botao.innerText = "REDIRECIONANDO...";
 
-    const ultimoClique = localStorage.getItem(chaveBloqueio);
-
-    if(ultimoClique){
-
-        const agora = Date.now();
-        const diferenca = agora - Number(ultimoClique);
-
-        if(diferenca < tempoBloqueio){
-            botao.disabled = true;
-            botao.innerText = "Você já clicou!";
-            clicado = true;
-            return;
-        }else{
-            localStorage.removeItem(chaveBloqueio);
-        }
-    }
-
-    botao.disabled = false;
-    botao.innerText = "VER OS CONTEÚDOS";
-    clicado = false;
-}
-
-verificarBloqueio();
-
-botao.addEventListener("click", comprar);
-
-function comprar(){
-
-    // trava clique duplo/triplo
-    if(clicado) return;
-
-    clicado = true;
-
-    botao.disabled = true;
-    botao.innerText = "REDIRECIONANDO...";
-
-    // salva clique por 48h
-    localStorage.setItem(chaveBloqueio, Date.now());
-
-    // Evento Purchase somente 1x
-    fbq('trackSingle', '2037756700442031', 'Purchase', {
-        value: 09.70,
-        currency: 'BRL'
-    });
-
-    // redireciona
-    setTimeout(function(){
-        window.location.href = "https://pacote-navy.vercel.app/";
-    }, 800);
-}
+  setTimeout(function () {
+    window.location.href = "https://pacote-navy.vercel.app/";
+  }, 800);
+});
 </script>
 
 </body>
