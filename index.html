@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -19,78 +20,95 @@ s.parentNode.insertBefore(t,s)}
 fbq('init', '1460995941881705');
 fbq('track', 'PageView');
 </script>
+
 <noscript>
-  <img height="1" width="1" style="display:none"
-  src="https://www.facebook.com/tr?id=1460995941881705&ev=PageView&noscript=1"/>
+<img
+  height="1"
+  width="1"
+  style="display:none"
+  src="https://www.facebook.com/tr?id=1460995941881705&ev=PageView&noscript=1"
+/>
 </noscript>
 <!-- End Meta Pixel -->
 
-<script>
-// 🔑 Gera event_id único por sessão (útil para CAPI no futuro)
-function gerarEventId() {
-  return 'purchase_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-}
-
-// ✅ Dispara Purchase na chegada, com deduplicação por sessionStorage
-const chaveDedup = 'purchase_fired';
-
-if (!sessionStorage.getItem(chaveDedup)) {
-  sessionStorage.setItem(chaveDedup, '1');
-
-  const eventId = gerarEventId();
-
-  fbq('trackSingle', '1460995941881705', 'Purchase', {
-    value: 10.00,
-    currency: 'BRL',
-    event_id: eventId  // para deduplicar com CAPI no futuro
-  });
-}
-</script>
-
 <style>
-body {
-  margin: 0; padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background: #111;
-  font-family: Arial, sans-serif;
+body{
+  margin:0;
+  padding:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  background:#111;
+  font-family:Arial,sans-serif;
 }
-button {
-  padding: 20px 40px;
-  font-size: 22px;
-  border: none;
-  border-radius: 12px;
-  background: #00c853;
-  color: #fff;
-  cursor: pointer;
-  font-weight: bold;
-  transition: 0.2s;
+
+button{
+  padding:20px 40px;
+  font-size:22px;
+  border:none;
+  border-radius:12px;
+  background:#00c853;
+  color:#fff;
+  cursor:pointer;
+  font-weight:bold;
+  transition:.2s;
 }
-button:hover { background: #00b248; }
-button:disabled { background: #555; cursor: not-allowed; }
+
+button:hover{
+  background:#00b248;
+}
+
+button:disabled{
+  background:#555;
+  cursor:not-allowed;
+}
 </style>
 </head>
 <body>
 
-<button id="btnConteudo">VER OS CONTEÚDOS</button>
+<button id="btnConteudo">ACESSAR PACOTE</button>
 
 <script>
 const botao = document.getElementById("btnConteudo");
-let clicado = false;
 
-botao.addEventListener("click", function () {
-  if (clicado) return;
-  clicado = true;
+const CHAVE_BLOQUEIO = "purchase_lock_until";
+const TEMPO_BLOQUEIO = 48 * 60 * 60 * 1000; // 48 horas
+
+function verificarBloqueio() {
+  const bloqueadoAte = localStorage.getItem(CHAVE_BLOQUEIO);
+
+  if (bloqueadoAte && Date.now() < Number(bloqueadoAte)) {
+    botao.disabled = true;
+    botao.innerText = "ACESSO JÁ LIBERADO";
+    return true;
+  }
+
+  return false;
+}
+
+// Verifica ao carregar a página
+verificarBloqueio();
+
+botao.addEventListener("click", function() {
+
+  if (verificarBloqueio()) return;
+
+  // Dispara Purchase de R$14,00
+  fbq('trackSingle', '1460995941881705', 'Purchase', {
+    value: 14.00,
+    currency: 'BRL'
+  });
+
+  // Bloqueia por 48 horas
+  const bloqueadoAte = Date.now() + TEMPO_BLOQUEIO;
+  localStorage.setItem(CHAVE_BLOQUEIO, bloqueadoAte);
+
   botao.disabled = true;
-  botao.innerText = "REDIRECIONANDO...";
-
-  setTimeout(function () {
-    window.location.href = "https://pacote-navy.vercel.app/";
-  }, 800);
+  botao.innerText = "ACESSO JÁ LIBERADO";
 });
 </script>
 
 </body>
 </html>
+```
